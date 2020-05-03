@@ -1,0 +1,192 @@
+version: "3"
+services:
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    environment:
+      - TOKEN=${DDNS_TOKEN}
+      - SUBDOMAINS=${DDNS_DOMAINS}
+      - TZ=Europe/Rome
+    restart: unless-stopped
+  firefly:
+    image: jc5x/firefly-iii:stable
+    container_name: firefly
+    env_file: env-firefly
+    volumes:
+      - ${PWD}/volumes/firefly-export:/var/www/firefly-iii/storage/export
+      - ${PWD}/volumes/firefly-upload:/var/www/firefly-iii/storage/upload
+    restart: unless-stopped
+    depends_on:
+      - firefly-db
+      - traefik
+      - duckdns
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.firefly.rule=Host(`${URL}`)"
+      - "traefik.http.routers.firefly.entrypoints=firefly"
+      - "traefik.http.middlewares.secureRedirectFirefly.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectFirefly.redirectscheme.port=${PORT_FIREFLY}"
+      - "traefik.http.routers.firefly.middlewares=secureRedirectFirefly"
+      - "traefik.http.routers.firefly-sec.tls=true"
+      - "traefik.http.routers.firefly-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.firefly-sec.entrypoints=firefly"
+      - "traefik.http.routers.firefly-sec.tls.certResolver=le"
+    networks:
+      - frontend
+      - backend
+  firefly-db:
+    image: postgres
+    container_name: firefly-db
+    environment:
+      - POSTGRES_USER=firefly
+      - POSTGRES_PASSWORD=firefly
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/volumes/firefly-db:/var/lib/postgresql/data
+    networks:
+      - backend
+  gotify:
+    image: gotify/server-arm7
+    container_name: gotify
+    volumes:
+      - "${PWD}/volumes/gotify:/app/data"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gotify.rule=Host(`${URL}`)"
+      - "traefik.http.routers.gotify.entrypoints=gotify"
+      - "traefik.http.middlewares.secureRedirectGotify.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectGotify.redirectscheme.port=${PORT_GOTIFY}"
+      - "traefik.http.routers.gotify.middlewares=secureRedirectGotify"
+      - "traefik.http.routers.gotify-sec.tls=true"
+      - "traefik.http.routers.gotify-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.gotify-sec.entrypoints=gotify"
+      - "traefik.http.routers.gotify-sec.tls.certResolver=le"
+    networks:
+      - frontend
+    depends_on:
+      - traefik
+      - duckdns
+    restart: unless-stopped
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    environment:
+      - TZ=Europe/Rome
+    volumes:
+      - ${PWD}/volumes/nodered:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node-red.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.node-red.entrypoints=node-red"
+    depends_on:
+      - traefik
+    networks:
+      - frontend
+    restart: unless-stopped
+  traefik:
+    image: traefik:v2.0
+    container_name: traefik
+    command:
+#      - --log.level=DEBUG
+      - --api=true
+      - --api.dashboard=true
+      - --providers.docker
+      - --entryPoints.webSecure.address=:443
+      - --entryPoints.ttrss.address=:${PORT_TTRSS}
+      - --entryPoints.firefly.address=:${PORT_FIREFLY}
+      - --entryPoints.gotify.address=:${PORT_GOTIFY}
+      - --entryPoints.node-red.address=:${PORT_NODERED}
+      - --entryPoints.traefik.address=:${PORT_DASHBOARD}
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=${NETWORK_NAME}
+      - --certificatesResolvers.le.acme.email=kwbmm@${URL}
+      - --certificatesResolvers.le.acme.tlsChallenge=true
+      - --certificatesResolvers.le.acme.dnsChallenge=true
+      - --certificatesResolvers.le.acme.dnsChallenge.provider=duckdns
+      # Staging server, test purposes only
+#      - --certificatesResolvers.le.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesResolvers.le.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesResolvers.le.acme.storage=/letsencrypt/acme.json
+    environment:
+      - DUCKDNS_TOKEN=${DDNS_TOKEN}
+    ports:
+      # The Web UI
+      - "${PORT_DASHBOARD}:${PORT_DASHBOARD}"
+      # For certificates renewal
+      - "443:443"
+      # TTRSS
+      - "${PORT_TTRSS}:${PORT_TTRSS}"
+      # Firefly
+      - "${PORT_FIREFLY}:${PORT_FIREFLY}"
+      # Gotify
+      - "${PORT_GOTIFY}:${PORT_GOTIFY}"
+      # Node-red
+      - "${PORT_NODERED}:${PORT_NODERED}"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/volumes/traefik-letsencrypt:/letsencrypt
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.routers.api.entrypoints=traefik"
+      - "traefik.http.routers.api.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${BASIC_AUTH_USR}:${BASIC_AUTH_PSW}"
+    networks:
+      - frontend
+    restart: unless-stopped
+  ttrss:
+    image: nventiveux/ttrss-arm32v6:latest
+    container_name: ttrss
+    environment:
+      - TTRSS_CONF_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
+      - TTRSS_DB_HOST=ttrss-db
+    restart: unless-stopped
+    depends_on:
+      - ttrss-db
+      - traefik
+      - duckdns
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ttrss.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ttrss.entrypoints=ttrss"
+      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.port=${PORT_TTRSS}"
+      - "traefik.http.routers.ttrss.middlewares=secureRedirectTTRss"
+      - "traefik.http.routers.ttrss-sec.tls=true"
+      - "traefik.http.routers.ttrss-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ttrss-sec.entrypoints=ttrss"
+      - "traefik.http.routers.ttrss-sec.tls.certResolver=le"
+    networks:
+      - frontend
+      - backend
+  ttrss-db:
+    image: postgres
+    container_name: ttrss-db
+    environment:
+      - POSTGRES_USER=ttrss
+      - POSTGRES_PASSWORD=ttrss
+    volumes:
+      - ${PWD}/volumes/ttrss-db:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: unless-stopped
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    command:
+      - --interval=28800
+    environment:
+      - WATCHTOWER_NOTIFICATIONS=gotify
+      - WATCHTOWER_NOTIFICATION_GOTIFY_URL=https://${URL}:${PORT_GOTIFY}/
+      - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN=${WATCHTOWER_GOTIFY_TOKEN}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
