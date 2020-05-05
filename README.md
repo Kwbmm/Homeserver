@@ -31,4 +31,4 @@ Watchtower keeps all the containers (itself as well) up to date automatically. M
 ## Other
 
   - `firefly-recurring-trans.sh` is a script file run through a cron job to trigger the processing of firefly recurring transaction that I have set up in my firefly instance. 
-  - `backup-volumes.sh` => **To be publish** Backs up the volumes of the services to MEGA. Volumes are encrypted first with `gocryptfs` and then uploaded through `mega-cmd`. Status of backups is controlled through gotify notifications.
+  - `backup-volumes.sh` => Backs up the services' volumes to MEGA. Volumes are encrypted first with `gocryptfs` and then uploaded through `mega-cmd`. Status of backups is controlled through `gotify` notifications.
