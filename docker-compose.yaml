@@ -142,6 +142,8 @@ services:
     environment:
       - TTRSS_CONF_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
       - TTRSS_DB_HOST=ttrss-db
+    volumes:
+      - ${PWD}/volumes/ttrss/plugins:/srv/ttrss/plugins.local
     restart: unless-stopped
     depends_on:
       - ttrss-db
