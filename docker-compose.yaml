@@ -24,6 +24,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.firefly.rule=Host(`${URL}`)"
       - "traefik.http.routers.firefly.entrypoints=firefly"
+      - "traefik.http.services.firefly.loadbalancer.server.port=8080"
       - "traefik.http.middlewares.secureRedirectFirefly.redirectscheme.scheme=https"
       - "traefik.http.middlewares.secureRedirectFirefly.redirectscheme.port=${PORT_FIREFLY}"
       - "traefik.http.routers.firefly.middlewares=secureRedirectFirefly"
