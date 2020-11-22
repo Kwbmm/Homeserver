@@ -9,12 +9,11 @@ services:
       - TZ=Europe/Rome
     restart: unless-stopped
   firefly:
-    image: jc5x/firefly-iii:stable
+    image: jc5x/firefly-iii:latest
     container_name: firefly
     env_file: env-firefly
     volumes:
-      - ${PWD}/volumes/firefly-export:/var/www/firefly-iii/storage/export
-      - ${PWD}/volumes/firefly-upload:/var/www/firefly-iii/storage/upload
+      - ${PWD}/volumes/firefly-upload:/var/www/html/storage/upload
     restart: unless-stopped
     depends_on:
       - firefly-db
