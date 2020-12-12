@@ -6,16 +6,16 @@
 #  - Upload the encrypted file on Mega
 #  - Handle errors
 
-source backup-config.sh
 
 #Volumes we want to backup
 declare -A volumes
 volumes["traefik"]="/letsencrypt"
-#volumes["ttrss-db"]="/var/lib/postgresql/data"
+volumes["ttrss-db"]="/var/lib/postgresql/data"
+volumes["ttrss"]="/srv/ttrss/plugins.local"
 volumes["firefly"]="/var/www/html/storage/upload"
 volumes["firefly-db"]="/var/lib/postgresql/data"
 volumes["gotify"]="/app/data"
-#volumes["node-red"]="/data"
+volumes["node-red"]="/data"
 
 #Files and Folders here
 homeserver="/home/pi/homeserver"
@@ -23,6 +23,8 @@ backupFolder="/home/pi/backup"
 tempBackupFolder="/tmp/bkp"
 encryptedFolder="/home/pi/encryptedVolumesOnMega"
 gocryptfsconfigs=("gocryptfs.conf" "gocryptfs.diriv") 
+
+source backup-config.sh
 
 array_contains () {
   local e match="$1"
@@ -96,7 +98,7 @@ for container in "${!volumes[@]}"; do
   docker run --rm --volumes-from ${container} -v ${tempBackupFolder}:/backup ubuntu tar czvf /backup/${container}_${backupDate}.tar.gz ${volumes[$container]} > /dev/null 2>&1
   echo "OK!"
 done
-docker-compose up -d firefly gotify
+docker-compose up -d
 cd -
 
 echo -n "Moving files in ${tempBackupFolder} to ${backupFolder}..."
