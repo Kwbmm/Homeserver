@@ -35,7 +35,7 @@ services:
       - frontend
       - backend
   firefly-db:
-    image: postgres
+    image: postgres:alpine
     container_name: firefly-db
     environment:
       - POSTGRES_USER=firefly
@@ -164,7 +164,7 @@ services:
       - frontend
       - backend
   ttrss-db:
-    image: postgres
+    image: postgres:alpine
     container_name: ttrss-db
     environment:
       - POSTGRES_USER=ttrss
