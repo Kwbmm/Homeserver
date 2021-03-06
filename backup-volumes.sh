@@ -10,8 +10,9 @@
 #Volumes we want to backup
 declare -A volumes
 volumes["traefik"]="/letsencrypt"
-volumes["ttrss-db"]="/var/lib/postgresql/data"
-volumes["ttrss"]="/srv/ttrss/plugins.local"
+volumes["freshrss-db"]="/var/lib/postgresql/data"
+volumes["freshrss-data"]="/var/www/FreshRSS/data"
+volumes["freshrss-extensions"]="/var/www/FreshRSS/extensions"
 volumes["firefly"]="/var/www/html/storage/upload"
 volumes["firefly-db"]="/var/lib/postgresql/data"
 volumes["gotify"]="/app/data"

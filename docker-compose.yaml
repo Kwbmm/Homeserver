@@ -58,15 +58,15 @@ services:
       - ${PWD}/volumes/freshrss-extensions:/var/www/FreshRSS/extensions
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ttrss.rule=Host(`${URL}`)"
-      - "traefik.http.routers.ttrss.entrypoints=ttrss"
-      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.port=${PORT_TTRSS}"
-      - "traefik.http.routers.ttrss.middlewares=secureRedirectTTRss"
-      - "traefik.http.routers.ttrss-sec.tls=true"
-      - "traefik.http.routers.ttrss-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.ttrss-sec.entrypoints=ttrss"
-      - "traefik.http.routers.ttrss-sec.tls.certResolver=le"
+      - "traefik.http.routers.feedreader.rule=Host(`${URL}`)"
+      - "traefik.http.routers.feedreader.entrypoints=feedreader"
+      - "traefik.http.middlewares.secureRedirectFeedReader.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectFeedReader.redirectscheme.port=${PORT_FEEDREADER}"
+      - "traefik.http.routers.feedreader.middlewares=secureRedirectFeedReader"
+      - "traefik.http.routers.feedreader-sec.tls=true"
+      - "traefik.http.routers.feedreader-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.feedreader-sec.entrypoints=feedreader"
+      - "traefik.http.routers.feedreader-sec.tls.certResolver=le"
     environment:
       CRON_MIN: '*/20'
       TZ: Europe/Paris
@@ -132,7 +132,7 @@ services:
       - --api.dashboard=true
       - --providers.docker
       - --entryPoints.webSecure.address=:443
-      - --entryPoints.ttrss.address=:${PORT_TTRSS}
+      - --entryPoints.feedreader.address=:${PORT_FEEDREADER}
       - --entryPoints.firefly.address=:${PORT_FIREFLY}
       - --entryPoints.gotify.address=:${PORT_GOTIFY}
       - --entryPoints.node-red.address=:${PORT_NODERED}
@@ -154,8 +154,8 @@ services:
       - "${PORT_DASHBOARD}:${PORT_DASHBOARD}"
       # For certificates renewal
       - "443:443"
-      # TTRSS
-      - "${PORT_TTRSS}:${PORT_TTRSS}"
+      # Feedreader
+      - "${PORT_FEEDREADER}:${PORT_FEEDREADER}"
       # Firefly
       - "${PORT_FIREFLY}:${PORT_FIREFLY}"
       # Gotify
