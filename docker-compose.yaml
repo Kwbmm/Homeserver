@@ -45,6 +45,46 @@ services:
       - ${PWD}/volumes/firefly-db:/var/lib/postgresql/data
     networks:
       - backend
+  freshrss:
+    image: freshrss/freshrss:arm
+    container_name: freshrss
+    restart: unless-stopped
+    depends_on:
+      - freshrss-db
+      - traefik
+      - duckdns
+    volumes:
+      - ${PWD}/volumes/freshrss-data:/var/www/FreshRSS/data
+      - ${PWD}/volumes/freshrss-extensions:/var/www/FreshRSS/extensions
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ttrss.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ttrss.entrypoints=ttrss"
+      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.port=${PORT_TTRSS}"
+      - "traefik.http.routers.ttrss.middlewares=secureRedirectTTRss"
+      - "traefik.http.routers.ttrss-sec.tls=true"
+      - "traefik.http.routers.ttrss-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ttrss-sec.entrypoints=ttrss"
+      - "traefik.http.routers.ttrss-sec.tls.certResolver=le"
+    environment:
+      CRON_MIN: '*/20'
+      TZ: Europe/Paris
+    networks:
+      - frontend
+      - backend
+  freshrss-db:
+    image: postgres:alpine
+    container_name: freshrss-db
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/volumes/freshrss-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=freshrss
+      - POSTGRES_PASSWORD=freshrss
+      - POSTGRES_DB=freshrss
+    networks:
+      - backend
   gotify:
     image: gotify/server-arm7
     container_name: gotify
@@ -135,44 +175,6 @@ services:
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${BASIC_AUTH_USR}:${BASIC_AUTH_PSW}"
     networks:
       - frontend
-    restart: unless-stopped
-  ttrss:
-    image: nventiveux/ttrss-arm32v6:latest
-    container_name: ttrss
-    environment:
-      - TTRSS_CONF_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
-      - TTRSS_DB_HOST=ttrss-db
-    volumes:
-      - ${PWD}/volumes/ttrss/plugins:/srv/ttrss/plugins.local
-    restart: unless-stopped
-    depends_on:
-      - ttrss-db
-      - traefik
-      - duckdns
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ttrss.rule=Host(`${URL}`)"
-      - "traefik.http.routers.ttrss.entrypoints=ttrss"
-      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectTTRss.redirectscheme.port=${PORT_TTRSS}"
-      - "traefik.http.routers.ttrss.middlewares=secureRedirectTTRss"
-      - "traefik.http.routers.ttrss-sec.tls=true"
-      - "traefik.http.routers.ttrss-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.ttrss-sec.entrypoints=ttrss"
-      - "traefik.http.routers.ttrss-sec.tls.certResolver=le"
-    networks:
-      - frontend
-      - backend
-  ttrss-db:
-    image: postgres:alpine
-    container_name: ttrss-db
-    environment:
-      - POSTGRES_USER=ttrss
-      - POSTGRES_PASSWORD=ttrss
-    volumes:
-      - ${PWD}/volumes/ttrss-db:/var/lib/postgresql/data
-    networks:
-      - backend
     restart: unless-stopped
   watchtower:
     image: containrrr/watchtower
