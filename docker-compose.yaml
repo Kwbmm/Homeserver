@@ -140,8 +140,11 @@ services:
     image: nventiveux/ttrss-arm32v6:latest
     container_name: ttrss
     environment:
-      - TTRSS_CONF_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
+      - TTRSS_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
       - TTRSS_DB_HOST=ttrss-db
+      - TTRSS_DB_TYPE=pgsql
+      - TTRSS_DB_USER=ttrss
+      - TTRSS_DB_PASS=ttrss
     volumes:
       - ${PWD}/volumes/ttrss/plugins:/srv/ttrss/plugins.local
     restart: unless-stopped
