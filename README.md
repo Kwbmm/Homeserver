@@ -38,11 +38,17 @@ Watchtower keeps all the containers (itself as well) up to date automatically. M
 Once the repo has been cloned, you need to
 
   1. Delete the `delete_me` files under `volumes/*` folders.
-  2. Configure `.env` file according to comments
+  2. Copy and rename:
+  
+      - `.env.example` -> `.env`
+      - `backup-config.sh.example` -> `backup-config.sh`
+      - `env-firfly.example` -> `env-firefly`  
+ 
+  3. Configure `.env` file according to comments
      
      If this project is contained in a folder whose name is not `homeserver`, `NETWORK_NAME` should be changed accordingly (e.g. `<foldername_frontend>`)
 
-  3. On your router, open the ports specified in the `.env` file. **Also** open port `443`: it's needed for *Let's Encrypt* SSL verification.
+  4. On your router, open the ports specified in the `.env` file. **Also** open port `443`: it's needed for *Let's Encrypt* SSL verification.
 
 ### Restoring backups
 
