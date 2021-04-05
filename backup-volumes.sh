@@ -24,7 +24,7 @@ tempBackupFolder="/tmp/bkp"
 encryptedFolder="/home/pi/encryptedVolumesOnMega"
 gocryptfsconfigs=("gocryptfs.conf" "gocryptfs.diriv") 
 
-source backup-config.sh
+source ${homeserver}/backup-config.sh
 
 array_contains () {
   local e match="$1"
