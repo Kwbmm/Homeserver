@@ -9,11 +9,11 @@ services:
       - TZ=Europe/Rome
     restart: unless-stopped
   firefly:
-    image: jc5x/firefly-iii:latest
+    image: fireflyiii/core 
     container_name: firefly
     env_file: env-firefly
     volumes:
-      - ${PWD}/volumes/firefly-upload:/var/www/html/storage/upload
+      - ~/volumes/firefly-upload:/var/www/html/storage/upload
     restart: unless-stopped
     depends_on:
       - firefly-db
@@ -42,47 +42,25 @@ services:
       - POSTGRES_PASSWORD=firefly
     restart: unless-stopped
     volumes:
-      - ${PWD}/volumes/firefly-db:/var/lib/postgresql/data
+      - ~/volumes/firefly-db:/var/lib/postgresql/data
     networks:
       - backend
-  gotify:
-    image: gotify/server-arm7
-    container_name: gotify
-    volumes:
-      - "${PWD}/volumes/gotify:/app/data"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gotify.rule=Host(`${URL}`)"
-      - "traefik.http.routers.gotify.entrypoints=gotify"
-      - "traefik.http.middlewares.secureRedirectGotify.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectGotify.redirectscheme.port=${PORT_GOTIFY}"
-      - "traefik.http.routers.gotify.middlewares=secureRedirectGotify"
-      - "traefik.http.routers.gotify-sec.tls=true"
-      - "traefik.http.routers.gotify-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.gotify-sec.entrypoints=gotify"
-      - "traefik.http.routers.gotify-sec.tls.certResolver=le"
-    networks:
-      - frontend
-    depends_on:
-      - traefik
-      - duckdns
-    restart: unless-stopped
-  node-red:
-    image: nodered/node-red:latest
-    container_name: node-red
-    environment:
-      - TZ=Europe/Rome
-    volumes:
-      - ${PWD}/volumes/nodered:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.node-red.rule=Host(`${IP_ADDRESS}`)"
-      - "traefik.http.routers.node-red.entrypoints=node-red"
-    depends_on:
-      - traefik
-    networks:
-      - frontend
-    restart: unless-stopped
+#  node-red:
+#    image: nodered/node-red:latest
+#    container_name: node-red
+#    environment:
+#      - TZ=Europe/Rome
+#    volumes:
+#      - ~/volumes/nodered:/data
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.node-red.rule=Host(`${IP_ADDRESS}`)"
+#      - "traefik.http.routers.node-red.entrypoints=node-red"
+#    depends_on:
+#      - traefik
+#    networks:
+#      - frontend
+#    restart: unless-stopped
   traefik:
     image: traefik:v2.0
     container_name: traefik
@@ -94,7 +72,6 @@ services:
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.firefly.address=:${PORT_FIREFLY}
-      - --entryPoints.gotify.address=:${PORT_GOTIFY}
       - --entryPoints.node-red.address=:${PORT_NODERED}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
@@ -118,14 +95,12 @@ services:
       - "${PORT_TTRSS}:${PORT_TTRSS}"
       # Firefly
       - "${PORT_FIREFLY}:${PORT_FIREFLY}"
-      # Gotify
-      - "${PORT_GOTIFY}:${PORT_GOTIFY}"
       # Node-red
       - "${PORT_NODERED}:${PORT_NODERED}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/volumes/traefik-letsencrypt:/letsencrypt
+      - ~/volumes/traefik-letsencrypt:/letsencrypt
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`${IP_ADDRESS}`)"
@@ -137,7 +112,7 @@ services:
       - frontend
     restart: unless-stopped
   ttrss:
-    image: nventiveux/ttrss-arm32v6:latest
+    image: nventiveux/ttrss-arm32v6:master
     container_name: ttrss
     environment:
       - TTRSS_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
@@ -146,7 +121,7 @@ services:
       - TTRSS_DB_USER=ttrss
       - TTRSS_DB_PASS=ttrss
     volumes:
-      - ${PWD}/volumes/ttrss/plugins:/srv/ttrss/plugins.local
+      - ~/volumes/ttrss/plugins:/srv/ttrss/plugins.local
     restart: unless-stopped
     depends_on:
       - ttrss-db
@@ -173,17 +148,16 @@ services:
       - POSTGRES_USER=ttrss
       - POSTGRES_PASSWORD=ttrss
     volumes:
-      - ${PWD}/volumes/ttrss-db:/var/lib/postgresql/data
+      - ~/volumes/ttrss-db:/var/lib/postgresql/data
     networks:
       - backend
     restart: unless-stopped
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
     environment:
-      - WATCHTOWER_NOTIFICATIONS=gotify
-      - WATCHTOWER_NOTIFICATION_GOTIFY_URL=https://${URL}:${PORT_GOTIFY}/
-      - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN=${WATCHTOWER_GOTIFY_TOKEN}
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=telegram://${WATCHTOWER_TG_API_TOKEN}@telegram?channels=${WATCHTOWER_TG_CHANNEL_ID}&title=Watchtower
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_POLL_INTERVAL=28800
     volumes:
