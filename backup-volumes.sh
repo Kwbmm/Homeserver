@@ -14,7 +14,6 @@ volumes["ttrss-db"]="/var/lib/postgresql/data"
 volumes["ttrss"]="/srv/ttrss/plugins.local"
 volumes["firefly"]="/var/www/html/storage/upload"
 volumes["firefly-db"]="/var/lib/postgresql/data"
-volumes["gotify"]="/app/data"
 volumes["node-red"]="/data"
 
 #Files and Folders here
@@ -36,8 +35,9 @@ array_contains () {
 notify() {
   local title="$1"
   local body="$2"
-
-  curl "https://${GOTIFY_URL}/message?token=${GOTIFY_API_KEY}" -F "title=${title}" -F "message=${body}"
+  local url="telegram://${TG_API_KEY}@telegram?channels=${TG_CHANNEL}&parseMode=HTML"
+  local msg=$(echo -e "<i>$title</i>\n$body")
+  docker run --rm containrrr/shoutrrr send -u "$url" --message "$msg"
 }
 
 # 1. Create the folder and check it's empty (folder  could be already there)
