@@ -8,59 +8,6 @@ services:
       - SUBDOMAINS=${DDNS_DOMAINS}
       - TZ=Europe/Rome
     restart: unless-stopped
-  firefly:
-    image: fireflyiii/core 
-    container_name: firefly
-    env_file: env-firefly
-    volumes:
-      - ~/volumes/firefly-upload:/var/www/html/storage/upload
-    restart: unless-stopped
-    depends_on:
-      - firefly-db
-      - traefik
-      - duckdns
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.firefly.rule=Host(`${URL}`)"
-      - "traefik.http.routers.firefly.entrypoints=firefly"
-      - "traefik.http.services.firefly.loadbalancer.server.port=8080"
-      - "traefik.http.middlewares.secureRedirectFirefly.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectFirefly.redirectscheme.port=${PORT_FIREFLY}"
-      - "traefik.http.routers.firefly.middlewares=secureRedirectFirefly"
-      - "traefik.http.routers.firefly-sec.tls=true"
-      - "traefik.http.routers.firefly-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.firefly-sec.entrypoints=firefly"
-      - "traefik.http.routers.firefly-sec.tls.certResolver=le"
-    networks:
-      - frontend
-      - backend
-  firefly-db:
-    image: postgres:alpine
-    container_name: firefly-db
-    environment:
-      - POSTGRES_USER=firefly
-      - POSTGRES_PASSWORD=firefly
-    restart: unless-stopped
-    volumes:
-      - ~/volumes/firefly-db:/var/lib/postgresql/data
-    networks:
-      - backend
-#  node-red:
-#    image: nodered/node-red:latest
-#    container_name: node-red
-#    environment:
-#      - TZ=Europe/Rome
-#    volumes:
-#      - ~/volumes/nodered:/data
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.node-red.rule=Host(`${IP_ADDRESS}`)"
-#      - "traefik.http.routers.node-red.entrypoints=node-red"
-#    depends_on:
-#      - traefik
-#    networks:
-#      - frontend
-#    restart: unless-stopped
   traefik:
     image: traefik:v2.0
     container_name: traefik
@@ -71,8 +18,6 @@ services:
       - --providers.docker
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
-      - --entryPoints.firefly.address=:${PORT_FIREFLY}
-      - --entryPoints.node-red.address=:${PORT_NODERED}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
@@ -93,10 +38,6 @@ services:
       - "443:443"
       # TTRSS
       - "${PORT_TTRSS}:${PORT_TTRSS}"
-      # Firefly
-      - "${PORT_FIREFLY}:${PORT_FIREFLY}"
-      # Node-red
-      - "${PORT_NODERED}:${PORT_NODERED}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
