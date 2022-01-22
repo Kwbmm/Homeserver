@@ -17,15 +17,18 @@ Let's Encrypt is used to secure the connection to these services through free va
 ## Internal services
 
   - Traefik Dashboard
+  - Home Assistant
   - Watchtower
 
 Traefik dashboard is used to keep an eye on the state of routing and services.
+
+Home Assistant adds automation to my home (lights, switches, ...)
 
 Watchtower keeps all the containers (itself as well) up to date automatically. Makes use of Gotify to notify me when an update occurs.
 
 ## Other
 
-  - `backup-volumes.sh` => Backs up the services' volumes to MEGA. Volumes are encrypted first with `gocryptfs` and then uploaded through `mega-cmd`. Status of backups is controlled through `gotify` notifications.
+  - `backup-volumes.sh` => Backs up the services' volumes to MEGA. Volumes are encrypted first with `gocryptfs` and then uploaded through `mega-cmd`. Status of backups is controlled through `shoutrrr` notifications.
 
 ## Bootstrapping
 

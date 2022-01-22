@@ -8,6 +8,30 @@ services:
       - SUBDOMAINS=${DDNS_DOMAINS}
       - TZ=Europe/Rome
     restart: unless-stopped
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ~/volumes/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homeassistant.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.homeassistant.entrypoints=homeassistant"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+      - "traefik.http.middlewares.secureRedirectHomeassistant.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectHomeassistant.redirectscheme.port=${PORT_HOMEASSISTANT}"
+      - "traefik.http.routers.homeassistant.middlewares=secureRedirectHomeassistant"
+      - "traefik.http.routers.homeassistant-sec.tls=true"
+      - "traefik.http.routers.homeassistant-sec.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.homeassistant-sec.entrypoints=homeassistant"
+      - "traefik.http.routers.homeassistant-sec.tls.certResolver=le"
+    restart: unless-stopped
+    privileged: true
+    networks:
+      - frontend
+    depends_on:
+      - traefik
   traefik:
     image: traefik:v2.0
     container_name: traefik
@@ -18,6 +42,7 @@ services:
       - --providers.docker
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
+      - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
@@ -38,6 +63,8 @@ services:
       - "443:443"
       # TTRSS
       - "${PORT_TTRSS}:${PORT_TTRSS}"
+      # Homeassistant
+      - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
