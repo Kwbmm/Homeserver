@@ -89,7 +89,7 @@ services:
       - TTRSS_DB_USER=ttrss
       - TTRSS_DB_PASS=ttrss
     volumes:
-      - ~/volumes/ttrss/plugins:/srv/ttrss/plugins.local
+      - ~/volumes/ttrss-plugins:/srv/ttrss/plugins.local
     restart: unless-stopped
     depends_on:
       - ttrss-db
