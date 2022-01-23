@@ -55,6 +55,45 @@ If you want to restore some backups
   4. Decrypt the files with `gocryptfs -masterkey <master_key> <encrypted_folder> <plain_folder>`
   5. Extract the archive you want with `tar -xzvf <archive> -C <localfolder>`
 
+
+**Service-specific actions**
+
+- Upgrade postgres DB: https://josepostiga.com/how-to-upgrade-postgresql-version-and-transfer-your-old-data-using-docker/
+  
+  *docker-compose.yml*:
+
+  ```
+    version: "3"
+    services:
+    #  ttrss-db:
+    #    image: postgres:13
+    #    container_name: ttrss-db
+    #    environment:
+    #      - POSTGRES_USER=ttrss
+    #      - POSTGRES_PASSWORD=ttrss
+    #    volumes:
+    #      - ~/volumes/ttrss-db:/var/lib/postgresql/data
+    #    networks:
+    #      - backend
+    #    restart: unless-stopped
+      pg14-db:
+        image: postgres:latest
+        container_name: ttrss-db
+        environment:
+          - POSTGRES_USER=ttrss
+          - POSTGRES_PASSWORD=ttrss
+        volumes:
+          - ~/volumes/ttrss-db:/var/lib/postgresql/data
+          - ~:/tmp
+        networks:
+          - backend
+        restart: unless-stopped
+
+    networks:
+      backend:
+        driver: bridge
+  ```
+
 ### Booting everything up
 
 Before launching everything, open `docker-compose.yml` and:
