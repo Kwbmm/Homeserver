@@ -52,7 +52,7 @@ If you want to restore some backups
   1. Login to mega with `mega-login`
   2. Get the folder you need with `mega-get`
   3. If you have encrypted stuff with `gocryptfs`, also pull the `gocryptfs.diriv` file and put it in the downloaded folder.
-  4. Decrypt the files with `gocryptfs -masterkey <master_key> <encrypted_folder> <plain_folder>
+  4. Decrypt the files with `gocryptfs -masterkey <master_key> <encrypted_folder> <plain_folder>`
   5. Extract the archive you want with `tar -xzvf <archive> -C <localfolder>`
 
 ### Booting everything up
