@@ -19,15 +19,7 @@ services:
       - "traefik.http.routers.homeassistant.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.homeassistant.entrypoints=homeassistant"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
-      - "traefik.http.middlewares.secureRedirectHomeassistant.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectHomeassistant.redirectscheme.port=${PORT_HOMEASSISTANT}"
-      - "traefik.http.routers.homeassistant.middlewares=secureRedirectHomeassistant"
-      - "traefik.http.routers.homeassistant-sec.tls=true"
-      - "traefik.http.routers.homeassistant-sec.rule=Host(`${IP_ADDRESS}`)"
-      - "traefik.http.routers.homeassistant-sec.entrypoints=homeassistant"
-      - "traefik.http.routers.homeassistant-sec.tls.certResolver=le"
     restart: unless-stopped
-    privileged: true
     networks:
       - frontend
     depends_on:
