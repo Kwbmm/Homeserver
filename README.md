@@ -58,7 +58,7 @@ If you want to restore some backups
 
 **Service-specific actions**
 
-- Upgrade postgres DB: https://josepostiga.com/how-to-upgrade-postgresql-version-and-transfer-your-old-data-using-docker/
+- Upgrade postgres DB: https://josepostiga.com/2020/08/15/how-to-quickly-upgrade-postgresql-version-using-docker/
   
   *docker-compose.yml*:
 
