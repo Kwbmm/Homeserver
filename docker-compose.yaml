@@ -74,7 +74,7 @@ services:
       - frontend
     restart: unless-stopped
   ttrss:
-    image: nventiveux/ttrss-arm32v6:master
+    image: nventiveux/ttrss:latest
     container_name: ttrss
     environment:
       - TTRSS_SELF_URL_PATH=https://${URL}:${PORT_TTRSS}
