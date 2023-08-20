@@ -104,7 +104,7 @@ services:
       - frontend
       - backend
   ttrss-db:
-    image: postgres:alpine
+    image: postgres:14-alpine
     container_name: ttrss-db
     environment:
       - POSTGRES_USER=ttrss
