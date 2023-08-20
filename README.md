@@ -18,11 +18,14 @@ Let's Encrypt is used to secure the connection to these services through free va
 
   - Traefik Dashboard
   - Home Assistant
+  - Nodered
   - Watchtower
 
 Traefik dashboard is used to keep an eye on the state of routing and services.
 
 Home Assistant adds automation to my home (lights, switches, ...)
+
+Node-Red is used to run some automation tasks.
 
 Watchtower keeps all the containers (itself as well) up to date automatically. Makes use of Gotify to notify me when an update occurs.
 

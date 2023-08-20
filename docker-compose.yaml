@@ -37,6 +37,7 @@ services:
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
+      - --entryPoints.node-red.address=:${PORT_NODERED}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
@@ -59,6 +60,8 @@ services:
       - "${PORT_TTRSS}:${PORT_TTRSS}"
       # Homeassistant
       - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
+      # Node-red
+      - "${PORT_NODERED}:${PORT_NODERED}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -113,6 +116,22 @@ services:
       - ~/volumes/ttrss-db:/var/lib/postgresql/data
     networks:
       - backend
+    restart: unless-stopped
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    environment:
+      - TZ=Europe/Rome
+    volumes:
+      - ~/volumes/nodered:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node-red.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.node-red.entrypoints=node-red"
+    depends_on:
+      - traefik
+    networks:
+      - frontend
     restart: unless-stopped
   watchtower:
     image: containrrr/watchtower:latest
