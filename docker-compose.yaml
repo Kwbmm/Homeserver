@@ -19,6 +19,8 @@ services:
       - "traefik.http.routers.homeassistant.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.homeassistant.entrypoints=homeassistant"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+    devices:
+      - "/dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_446c70406a45ed118942c68f0a86e0b4-if00-port0:/dev/ttyUSB0"
     restart: unless-stopped
     networks:
       - frontend
