@@ -120,22 +120,6 @@ services:
     networks:
       - backend
     restart: unless-stopped
-  node-red:
-    image: nodered/node-red:latest
-    container_name: node-red
-    environment:
-      - TZ=Europe/Rome
-    volumes:
-      - ~/volumes/nodered:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.node-red.rule=Host(`${IP_ADDRESS}`)"
-      - "traefik.http.routers.node-red.entrypoints=node-red"
-    depends_on:
-      - traefik
-    networks:
-      - frontend
-    restart: unless-stopped
   watchtower:
     image: containrrr/watchtower:latest
     container_name: watchtower

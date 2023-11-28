@@ -13,7 +13,7 @@ volumes["traefik"]="/letsencrypt"
 volumes["ttrss-db"]="/var/lib/postgresql/data"
 volumes["ttrss"]="/srv/ttrss/plugins.local"
 volumes["homeassistant"]="/config"
-volumes["node-red"]="/data"
+#volumes["node-red"]="/data"
 
 #Files and Folders here
 homeserver="/home/pi/homeserver"
