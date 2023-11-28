@@ -38,6 +38,7 @@ services:
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
       - --entryPoints.node-red.address=:${PORT_NODERED}
+      - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
@@ -62,6 +63,8 @@ services:
       - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
       # Node-red
       - "${PORT_NODERED}:${PORT_NODERED}"
+      # FRESHRSS
+      - "${PORT_FRESHRSS}:${PORT_FRESHRSS}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -144,6 +147,37 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+  freshrss:
+    image: freshrss/freshrss:edge
+    container_name: freshrss
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ~/volumes/freshrss/data:/var/www/FreshRSS/data
+      - ~/volumes/freshrss/extensions:/var/www/FreshRSS/extensions
+    depends_on:
+      - traefik
+      - duckdns
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.freshrss.rule=Host(`${URL}`)"
+      - "traefik.http.routers.freshrss.entrypoints=freshrss"
+      - "traefik.http.middlewares.secureRedirectFreshRSS.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectFreshRSS.redirectscheme.port=${PORT_FRESHRSS}"
+      - "traefik.http.routers.freshrss.middlewares=secureRedirectFreshRSS"
+      - "traefik.http.routers.freshrss-sec.tls=true"
+      - "traefik.http.routers.freshrss-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.freshrss-sec.entrypoints=freshrss"
+      - "traefik.http.routers.freshrss-sec.tls.certResolver=le"
+    environment:
+      TZ: Europe/Rome
+      CRON_MIN: '3,33'
+    networks:
+      - frontend
+      - backend
+
 
 networks:
   frontend:
