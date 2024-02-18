@@ -8,24 +8,6 @@ services:
       - SUBDOMAINS=${DDNS_DOMAINS}
       - TZ=Europe/Rome
     restart: unless-stopped
-  homeassistant:
-    container_name: homeassistant
-    image: "homeassistant/home-assistant:latest"
-    volumes:
-      - ~/volumes/homeassistant:/config
-      - /etc/localtime:/etc/localtime:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.homeassistant.rule=Host(`${IP_ADDRESS}`)"
-      - "traefik.http.routers.homeassistant.entrypoints=homeassistant"
-      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
-    devices:
-      - "/dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_446c70406a45ed118942c68f0a86e0b4-if00-port0:/dev/ttyUSB0"
-    restart: unless-stopped
-    networks:
-      - frontend
-    depends_on:
-      - traefik
   traefik:
     image: traefik:v2.0
     container_name: traefik
@@ -36,8 +18,6 @@ services:
       - --providers.docker
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
-      - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
-      - --entryPoints.node-red.address=:${PORT_NODERED}
       - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
@@ -59,10 +39,6 @@ services:
       - "443:443"
       # TTRSS
       - "${PORT_TTRSS}:${PORT_TTRSS}"
-      # Homeassistant
-      - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
-      # Node-red
-      - "${PORT_NODERED}:${PORT_NODERED}"
       # FRESHRSS
       - "${PORT_FRESHRSS}:${PORT_FRESHRSS}"
     volumes:
