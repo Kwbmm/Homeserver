@@ -19,6 +19,7 @@ services:
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
+      - --entryPoints.ryot.address=:${PORT_RYOT}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
@@ -41,6 +42,8 @@ services:
       - "${PORT_TTRSS}:${PORT_TTRSS}"
       # FRESHRSS
       - "${PORT_FRESHRSS}:${PORT_FRESHRSS}"
+      # RYOT
+      - "${PORT_RYOT}:${PORT_RYOT}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -138,6 +141,45 @@ services:
       - frontend
       - backend
 
+  ryot-db:
+    image: postgres:16-alpine
+    container_name: ryot-db
+    volumes:
+      - ~/volumes/ryot-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - backend
+    restart: unless-stopped
+
+  ryot:
+    image: "ghcr.io/ignisda/ryot:latest"
+    container_name: ryot
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@ryot-db:5432/postgres
+      - USERS_ALLOW_REGISTRATION=false
+    restart: unless-stopped
+    depends_on:
+      - ryot-db
+      - traefik
+      - duckdns
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ryot.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ryot.entrypoints=ryot"
+      - "traefik.http.middlewares.secureRedirectRyot.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectRyot.redirectscheme.port=${PORT_RYOT}"
+      - "traefik.http.services.ryot.loadbalancer.server.port=8000"
+      - "traefik.http.routers.ryot.middlewares=secureRedirectRyot"
+      - "traefik.http.routers.ryot-sec.tls=true"
+      - "traefik.http.routers.ryot-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ryot-sec.entrypoints=ryot"
+      - "traefik.http.routers.ryot-sec.tls.certResolver=le"
 
 networks:
   frontend:

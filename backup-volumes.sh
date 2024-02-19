@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # GOALS:
 #  - program execution should be idempotent
 #  - Backup docker volumes as tar files
@@ -13,12 +14,13 @@ volumes["traefik"]="/letsencrypt"
 volumes["ttrss-db"]="/var/lib/postgresql/data"
 volumes["ttrss"]="/srv/ttrss/plugins.local"
 volumes["freshrss"]="/var/www/FreshRSS"
+volumes["ryot-db"]="/var/lib/postgresql/data"
 
 #Files and Folders here
-homeserver="/home/pi/homeserver"
-backupFolder="/home/pi/backup"
+homeserver="/home/${USER}/homeserver"
+backupFolder="/home/${USER}/backup"
 tempBackupFolder="/tmp/bkp"
-encryptedFolder="/home/pi/encryptedVolumesOnMega"
+encryptedFolder="/home/${USER}/encryptedVolumesOnMega"
 gocryptfsconfigs=("gocryptfs.conf" "gocryptfs.diriv") 
 
 source ${homeserver}/backup-config.sh
