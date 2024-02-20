@@ -20,6 +20,7 @@ services:
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
       - --entryPoints.ryot.address=:${PORT_RYOT}
+      - --entryPoints.changedetection.address=:${PORT_CHANGEDETECTION}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
@@ -44,6 +45,7 @@ services:
       - "${PORT_FRESHRSS}:${PORT_FRESHRSS}"
       # RYOT
       - "${PORT_RYOT}:${PORT_RYOT}"
+      - "${PORT_CHANGEDETECTION}:${PORT_CHANGEDETECTION}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -180,6 +182,44 @@ services:
       - "traefik.http.routers.ryot-sec.rule=Host(`${URL}`)"
       - "traefik.http.routers.ryot-sec.entrypoints=ryot"
       - "traefik.http.routers.ryot-sec.tls.certResolver=le"
+
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io
+    container_name: changedetection
+    hostname: changedetection
+    volumes:
+      - ~/volumes/changedetection:/datastore
+    environment:
+      - PLAYWRIGHT_DRIVER_URL=ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true
+    restart: unless-stopped
+    depends_on:
+      - playwright-chrome
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.changedetection.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.changedetection.entrypoints=changedetection"
+    networks:
+      - frontend
+
+  playwright-chrome:
+    hostname: playwright-chrome
+    image: browserless/chrome:1.60-chrome-stable
+    restart: unless-stopped
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1024
+      - SCREEN_DEPTH=16
+      - ENABLE_DEBUGGER=false
+      - PREBOOT_CHROME=true
+      - CONNECTION_TIMEOUT=300000
+      - MAX_CONCURRENT_SESSIONS=10
+      - CHROME_REFRESH_TIME=600000
+      - DEFAULT_BLOCK_ADS=true
+      - DEFAULT_STEALTH=true
+      - DEFAULT_IGNORE_HTTPS_ERRORS=true
+    networks:
+      - frontend
 
 networks:
   frontend:

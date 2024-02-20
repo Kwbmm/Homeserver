@@ -8,3 +8,4 @@ mkdir -p volumes/freshrss
 mkdir -p volumes/freshrss/data
 mkdir -p volumes/freshrss/extensions
 mkdir -p volumes/ryot-db
+mkdir -p volumes/changedetection
