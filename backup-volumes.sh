@@ -16,6 +16,8 @@ volumes["ttrss"]="/srv/ttrss/plugins.local"
 volumes["freshrss"]="/var/www/FreshRSS"
 volumes["ryot-db"]="/var/lib/postgresql/data"
 volumes["changedetection"]="/datastore"
+volumes["mealie"]="/app/data"
+volumes["mealie-db"]="/var/lib/postgresql/data"
 
 #Files and Folders here
 homeserver="/home/${USER}/homeserver"
