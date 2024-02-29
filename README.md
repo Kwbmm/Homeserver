@@ -6,8 +6,10 @@ The services are deployed through a docker-compose file. The following services 
 
 ## Exposed services
 
-  - Tiny Tiny RSS
-  - FreshRSS
+  - Tiny Tiny RSS (8000)
+  - Ryot (8001)
+  - FreshRSS (8003)
+  - Mealie (8004)
 
 Requests are routed and handled through Traefik reverse proxy.
 
@@ -19,10 +21,9 @@ Let's Encrypt is used to secure the connection to these services through free va
 
   - Traefik Dashboard
   - Watchtower
+  - Changedetection (8002)
 
 Traefik dashboard is used to keep an eye on the state of routing and services.
-
-Home Assistant adds automation to my home (lights, switches, ...)
 
 Watchtower keeps all the containers (itself as well) up to date automatically. Makes use of Gotify to notify me when an update occurs.
 
