@@ -20,6 +20,7 @@ services:
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
       - --entryPoints.ryot.address=:${PORT_RYOT}
+      - --entryPoints.mealie.address=:${PORT_MEALIE}
       - --entryPoints.changedetection.address=:${PORT_CHANGEDETECTION}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --providers.docker.exposedbydefault=false
@@ -46,6 +47,7 @@ services:
       # RYOT
       - "${PORT_RYOT}:${PORT_RYOT}"
       - "${PORT_CHANGEDETECTION}:${PORT_CHANGEDETECTION}"
+      - "${PORT_MEALIE}:${PORT_MEALIE}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -213,6 +215,65 @@ services:
       - MAX_CONCURRENT_CHROME_PROCESSES=10
     networks:
       - frontend
+
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v1.2.0 
+    container_name: mealie
+    deploy:
+      resources:
+        limits:
+          memory: 1000M 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mealie.rule=Host(`${URL}`)"
+      - "traefik.http.routers.mealie.entrypoints=mealie"
+      - "traefik.http.middlewares.secureRedirectMealie.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectMealie.redirectscheme.port=${PORT_MEALIE}"
+      - "traefik.http.routers.mealie.middlewares=secureRedirectMealie"
+      - "traefik.http.routers.mealie-sec.tls=true"
+      - "traefik.http.routers.mealie-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.mealie-sec.entrypoints=mealie"
+      - "traefik.http.routers.mealie-sec.tls.certResolver=le"
+    depends_on:
+      - mealie-db
+      - traefik
+      - duckdns
+    volumes:
+      - ~/volumes/mealie:/app/data/
+    environment:
+    # Set Backend ENV Variables Here
+      - ALLOW_SIGNUP=false
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - MAX_WORKERS=1
+      - WEB_CONCURRENCY=1
+      - BASE_URL=https://mealie.yourdomain.com
+
+    # Database Settings
+      - DB_ENGINE=postgres
+      - POSTGRES_USER=mealie-db
+      - POSTGRES_PASSWORD=mealie-db
+      - POSTGRES_SERVER=mealie-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=mealie-db
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+  mealie-db:
+    container_name: mealie-db
+    image: postgres:15
+    restart: unless-stopped
+    volumes:
+      - ~/volumes/mealie-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: mealie-db
+      POSTGRES_USER: mealie-db
+    networks:
+      - backend
+
+
 
 networks:
   frontend:
