@@ -1,0 +1,22 @@
+services:
+  redlib:
+    image: quay.io/redlib/redlib:latest
+    restart: unless-stopped
+    depends_on:
+      - traefik
+    container_name: "redlib"
+    user: nobody
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.redlib.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.redlib.entrypoints=redlib"
+    env_file: .redlib.env
+    networks:
+      - frontend
+    healthcheck:
+      interval: 30s

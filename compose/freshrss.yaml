@@ -1,0 +1,31 @@
+services:
+  freshrss:
+    image: freshrss/freshrss:edge
+    container_name: freshrss
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+    volumes:
+      - ~/volumes/freshrss/data:/var/www/FreshRSS/data
+      - ~/volumes/freshrss/extensions:/var/www/FreshRSS/extensions
+    depends_on:
+      - traefik
+      - duckdns
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.freshrss.rule=Host(`${URL}`)"
+      - "traefik.http.routers.freshrss.entrypoints=freshrss"
+      - "traefik.http.middlewares.secureRedirectFreshRSS.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectFreshRSS.redirectscheme.port=${PORT_FRESHRSS}"
+      - "traefik.http.routers.freshrss.middlewares=secureRedirectFreshRSS"
+      - "traefik.http.routers.freshrss-sec.tls=true"
+      - "traefik.http.routers.freshrss-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.freshrss-sec.entrypoints=freshrss"
+      - "traefik.http.routers.freshrss-sec.tls.certResolver=le"
+    environment:
+      TZ: Europe/Rome
+      CRON_MIN: '3,33'
+    networks:
+      - frontend
+      - backend

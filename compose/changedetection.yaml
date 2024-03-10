@@ -1,0 +1,32 @@
+services:
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io
+    container_name: changedetection
+    hostname: changedetection
+    volumes:
+      - ~/volumes/changedetection:/datastore
+    environment:
+      - PLAYWRIGHT_DRIVER_URL=ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true
+    restart: unless-stopped
+    depends_on:
+      - playwright-chrome
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.changedetection.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.changedetection.entrypoints=changedetection"
+    networks:
+      - frontend
+
+  playwright-chrome:
+    hostname: playwright-chrome
+    image: dgtlmoon/sockpuppetbrowser:latest
+    restart: unless-stopped
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1024
+      - SCREEN_DEPTH=16
+      - MAX_CONCURRENT_CHROME_PROCESSES=10
+    networks:
+      - frontend
+
