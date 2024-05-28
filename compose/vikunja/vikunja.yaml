@@ -1,0 +1,41 @@
+services:
+  vikunja:
+    image: vikunja/vikunja
+    container_name: vikunja
+    env_file: .vikunja.env
+    volumes: 
+      - ~/volumes/vikunja:/app/vikunja/files
+    depends_on:
+      - vikunja-db
+      - traefik
+      - duckdns
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vikunja.rule=Host(`${URL}`)"
+      - "traefik.http.routers.vikunja.entrypoints=vikunja"
+      - "traefik.http.middlewares.secureRedirectVikunja.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.secureRedirectVikunja.redirectscheme.port=${PORT_VIKUNJA}"
+      - "traefik.http.routers.vikunja.middlewares=secureRedirectVikunja"
+      - "traefik.http.routers.vikunja-sec.tls=true"
+      - "traefik.http.routers.vikunja-sec.rule=Host(`${URL}`)"
+      - "traefik.http.routers.vikunja-sec.entrypoints=vikunja"
+      - "traefik.http.routers.vikunja-sec.tls.certResolver=le"
+    networks:
+      - frontend
+      - backend
+
+  vikunja-db:
+    image: postgres:16
+    container_name: vikunja-db
+    environment:
+      POSTGRES_PASSWORD: vikunja
+      POSTGRES_USER: vikunja
+    volumes:
+      - ~/volumes/vikunja-db:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U $$POSTGRES_USER"]
+      interval: 2s

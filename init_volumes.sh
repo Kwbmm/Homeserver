@@ -11,3 +11,5 @@ mkdir -p volumes/ryot-db
 mkdir -p volumes/changedetection
 mkdir -p volumes/mealie
 mkdir -p volumes/mealie-db
+mkdir -p volumes/vikunja/
+mkdir -p volumes/vikunja-db

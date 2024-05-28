@@ -18,6 +18,8 @@ volumes["ryot-db"]="/var/lib/postgresql/data"
 volumes["changedetection"]="/datastore"
 volumes["mealie"]="/app/data"
 volumes["mealie-db"]="/var/lib/postgresql/data"
+volumes["vikunja-db"]="/var/lib/postgresql/data"
+volumes["vikunja"]="/app/vikunja/files"
 
 #Files and Folders here
 homeserver="/home/${USER}/homeserver"

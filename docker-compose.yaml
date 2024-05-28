@@ -8,6 +8,7 @@ include:
   - compose/redlib/redlib.yaml
   - compose/ryot.yaml
   - compose/ttrss.yaml
+  - compose/vikunja/vikunja.yaml
   - compose/watchtower.yaml
 
 services:
@@ -27,6 +28,7 @@ services:
       - --entryPoints.changedetection.address=:${PORT_CHANGEDETECTION}
       - --entryPoints.redlib.address=:${PORT_REDLIB}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
+      - --entryPoints.vikunja.address=:${PORT_VIKUNJA}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
       - --certificatesResolvers.le.acme.email=kwbmm@${URL}
@@ -53,6 +55,7 @@ services:
       - "${PORT_CHANGEDETECTION}:${PORT_CHANGEDETECTION}"
       - "${PORT_MEALIE}:${PORT_MEALIE}"
       - "${PORT_REDLIB}:${PORT_REDLIB}"
+      - "${PORT_VIKUNJA}:${PORT_VIKUNJA}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
