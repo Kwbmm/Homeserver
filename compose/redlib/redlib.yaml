@@ -1,6 +1,6 @@
 services:
   redlib:
-    image: quay.io/redlib/redlib:latest
+    build: ./
     restart: unless-stopped
     depends_on:
       - traefik
@@ -15,6 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.redlib.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.redlib.entrypoints=redlib"
+      - "traefik.http.services.redlib.loadbalancer.server.port=8080"
     env_file: .redlib.env
     networks:
       - frontend
