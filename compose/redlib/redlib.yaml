@@ -1,6 +1,6 @@
 services:
   redlib:
-    build: ./
+    image: quay.io/redlib/redlib:latest
     restart: unless-stopped
     depends_on:
       - traefik
