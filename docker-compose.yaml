@@ -20,6 +20,7 @@ services:
       - --api=true
       - --api.dashboard=true
       - --providers.docker
+      - --providers.file.filename=/config/dynamic.yml
       - --entryPoints.webSecure.address=:443
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
       - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
@@ -29,6 +30,7 @@ services:
       - --entryPoints.redlib.address=:${PORT_REDLIB}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --entryPoints.vikunja.address=:${PORT_VIKUNJA}
+      - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
       - --certificatesResolvers.le.acme.email=kwbmm@${URL}
@@ -56,10 +58,12 @@ services:
       - "${PORT_MEALIE}:${PORT_MEALIE}"
       - "${PORT_REDLIB}:${PORT_REDLIB}"
       - "${PORT_VIKUNJA}:${PORT_VIKUNJA}"
+      - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/volumes/traefik-letsencrypt:/letsencrypt
+      - ~/volumes/traefik/dynamic.yml:/config/dynamic.yml
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`${IP_ADDRESS}`)"

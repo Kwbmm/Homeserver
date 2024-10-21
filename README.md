@@ -10,6 +10,7 @@ The services are deployed through a docker-compose file. The following services 
   - Ryot (8001)
   - FreshRSS (8003)
   - Mealie (8004)
+  - Homeassistant (8008)
 
 Requests are routed and handled through Traefik reverse proxy.
 
@@ -57,9 +58,10 @@ If you want to restore some backups
   5. Extract the archive you want with `tar -xzvf <archive> -C <localfolder>`
 
 
-**Service-specific actions**
+### Service-specific actions
 
-- Upgrade postgres DB: https://josepostiga.com/2020/08/15/how-to-quickly-upgrade-postgresql-version-using-docker/
+**Upgrade postgres DB**
+See https://josepostiga.com/2020/08/15/how-to-quickly-upgrade-postgresql-version-using-docker/
   
   *docker-compose.yml*:
 
@@ -93,6 +95,44 @@ If you want to restore some backups
     networks:
       backend:
         driver: bridge
+  ```
+
+**Homeassistant Dynamc config file**
+
+The usecase here is when you are hosting homeassistant on another device of your network and you want to expose HA to the internet without having to deal with SSL certificates. You can use traefik to redirect the traffic to that host on the internal network.
+
+The traefik setup requires using a dynamic configuration that is loaded inside the container through a mounted volume. This is the required configuration:
+
+  ```
+    http:
+    routers:
+      ha:
+        rule: Host(`primate-traffic.duckdns.org`)
+        entryPoints:
+          - homeassistant
+        middlewares:
+          - secureRedirectHA
+        service: ha
+      ha-sec:
+        tls:
+          certResolver: le
+        rule: Host(`primate-traffic.duckdns.org`)
+        service: ha
+        entryPoints:
+          - homeassistant
+
+    middlewares:
+      secureRedirectHA:
+        redirectScheme:
+          scheme: https
+          port: 8008
+
+    services:
+      ha:
+        loadBalancer:
+          servers:
+            - url: http://homeassistant.lan:8123
+          passHostHeader: true
   ```
 
 ### Booting everything up
