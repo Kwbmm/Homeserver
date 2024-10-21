@@ -1,9 +1,9 @@
 services:
   duckdns:
-    image: linuxserver/duckdns
+    image: linuxserver/duckdns:latest
     container_name: duckdns
     environment:
       - TOKEN=${DDNS_TOKEN}
       - SUBDOMAINS=${DDNS_DOMAINS}
-      - TZ=Europe/Rome
+      - TZ=Europe/Paris
     restart: unless-stopped
