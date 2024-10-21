@@ -7,6 +7,7 @@ services:
       - WATCHTOWER_NOTIFICATION_URL=telegram://${WATCHTOWER_TG_API_TOKEN}@telegram?channels=${WATCHTOWER_TG_CHANNEL_ID}&title=Watchtower
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_POLL_INTERVAL=28800
+      - WATCHTOWER_DISABLE_CONTAINERS=rx-resume
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
