@@ -5,6 +5,7 @@ include:
   - compose/duckdns.yaml
   - compose/freshrss.yaml
   - compose/mealie.yaml
+  - compose/reactive-resume/reactive-resume.yaml
   - compose/redlib/redlib.yaml
   - compose/ryot.yaml
   - compose/ttrss.yaml
@@ -28,6 +29,9 @@ services:
       - --entryPoints.mealie.address=:${PORT_MEALIE}
       - --entryPoints.changedetection.address=:${PORT_CHANGEDETECTION}
       - --entryPoints.redlib.address=:${PORT_REDLIB}
+      - --entryPoints.rx-resume.address=:${PORT_RX_RES}
+      - --entryPoints.rx-res-chrome.address=:${PORT_RX_RES_CHROME}
+      - --entryPoints.rx-res-minio.address=:${PORT_RX_RES_MINIO}
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --entryPoints.vikunja.address=:${PORT_VIKUNJA}
       - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
@@ -48,15 +52,15 @@ services:
       - "${PORT_DASHBOARD}:${PORT_DASHBOARD}"
       # For certificates renewal
       - "443:443"
-      # TTRSS
       - "${PORT_TTRSS}:${PORT_TTRSS}"
-      # FRESHRSS
       - "${PORT_FRESHRSS}:${PORT_FRESHRSS}"
-      # RYOT
       - "${PORT_RYOT}:${PORT_RYOT}"
       - "${PORT_CHANGEDETECTION}:${PORT_CHANGEDETECTION}"
       - "${PORT_MEALIE}:${PORT_MEALIE}"
       - "${PORT_REDLIB}:${PORT_REDLIB}"
+      - "${PORT_RX_RES}:${PORT_RX_RES}"
+      - "${PORT_RX_RES_MINIO}:${PORT_RX_RES_MINIO}"
+      - "${PORT_RX_RES_CHROME}:${PORT_RX_RES_CHROME}"
       - "${PORT_VIKUNJA}:${PORT_VIKUNJA}"
       - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
     volumes:

@@ -13,3 +13,6 @@ mkdir -p volumes/mealie
 mkdir -p volumes/mealie-db
 mkdir -p volumes/vikunja/
 mkdir -p volumes/vikunja-db
+mkdir -p volumes/rx-res
+mkdir -p volumes/rx-res-minio
+mkdir -p volumes/rx-res-db
