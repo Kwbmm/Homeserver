@@ -9,8 +9,10 @@ mkdir -p volumes/freshrss/data
 mkdir -p volumes/freshrss/extensions
 mkdir -p volumes/ryot-db
 mkdir -p volumes/changedetection
+mkdir -p volumes/hoarder
 mkdir -p volumes/mealie
 mkdir -p volumes/mealie-db
+mkdir -p volumes/meili
 mkdir -p volumes/vikunja/
 mkdir -p volumes/vikunja-db
 mkdir -p volumes/rx-res
