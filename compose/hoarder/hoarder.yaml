@@ -10,7 +10,6 @@ services:
     environment:
       MEILI_ADDR: http://hoarder-meilisearch:7700
       BROWSER_WEB_URL: http://hoarder-chrome:9222
-      # OPENAI_API_KEY: ...
       DATA_DIR: /data
     labels:
       - "traefik.enable=true"
