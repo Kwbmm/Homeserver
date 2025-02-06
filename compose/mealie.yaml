@@ -46,7 +46,7 @@ services:
       - backend
   mealie-db:
     container_name: mealie-db
-    image: postgres:15
+    image: postgres:15.10-alpine3.19
     restart: unless-stopped
     volumes:
       - ~/volumes/mealie-db:/var/lib/postgresql/data

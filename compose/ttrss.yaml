@@ -30,7 +30,7 @@ services:
       - frontend
       - backend
   ttrss-db:
-    image: postgres:14-alpine
+    image: postgres:14-alpine3.19
     container_name: ttrss-db
     environment:
       - POSTGRES_USER=ttrss
