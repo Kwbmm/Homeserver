@@ -1,0 +1,61 @@
+services:
+  invoiceshelf-db:
+    container_name: invoiceshelf-db
+    image: postgres:15-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/volumes/invoiceshelf-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=somepass
+      - POSTGRES_USER=invoiceshelf
+      - POSTGRES_DB=invoiceshelf
+    networks:
+      - backend
+    restart: unless-stopped
+
+  invoiceshelf:
+    image: invoiceshelf/invoiceshelf:latest
+    container_name: invoiceshelf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.invoiceshelf.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.invoiceshelf.entrypoints=invoiceshelf"
+    volumes:
+      - ~/volumes/invoiceshelf/data:/data
+      - ~/volumes/invoiceshelf/conf:/conf
+    networks:
+      - frontend
+      - backend
+    environment:
+      - PHP_TZ=UTC
+      - TIMEZONE=UTC
+      - APP_NAME=Laravel
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:90
+      - DB_CONNECTION=pgsql
+      - DB_HOST=invoiceshelf-db
+      - DB_PORT=5432
+      - DB_DATABASE=invoiceshelf
+      - DB_USERNAME=invoiceshelf
+      - DB_PASSWORD=somepass
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - SESSION_LIFETIME=120
+      - SESSION_ENCRYPT=false
+      - SESSION_PATH=/
+      - SESSION_DOMAIN=localhost
+      - SANCTUM_STATEFUL_DOMAINS=localhost:90
+      - STARTUP_DELAY=10
+      #- MAIL_DRIVER=smtp
+      #- MAIL_HOST=smtp.mailtrap.io
+      #- MAIL_PORT=2525
+      #- MAIL_USERNAME=null
+      #- MAIL_PASSWORD=null
+      #- MAIL_PASSWORD_FILE=<filename>
+      #- MAIL_ENCRYPTION=null
+    restart: unless-stopped
+    depends_on:
+      - invoiceshelf-db
+      - traefik

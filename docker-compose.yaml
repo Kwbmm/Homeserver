@@ -4,6 +4,7 @@ include:
   # - compose/changedetection.yaml
   - compose/duckdns.yaml
   - compose/freshrss.yaml
+  - compose/invoice_shelf.yaml
   - compose/hoarder/hoarder.yaml
   - compose/mealie.yaml
   # - compose/reactive-resume/reactive-resume.yaml
@@ -37,6 +38,7 @@ services:
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --entryPoints.vikunja.address=:${PORT_VIKUNJA}
       - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
+      - --entryPoints.invoiceshelf.address=:${PORT_INVOICESHELF}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
       - --certificatesResolvers.le.acme.email=kwbmm@${URL}
@@ -66,6 +68,7 @@ services:
       - "${PORT_VIKUNJA}:${PORT_VIKUNJA}"
       - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
       - "${PORT_HOARDER}:${PORT_HOARDER}"
+      - "${PORT_INVOICESHELF}:${PORT_INVOICESHELF}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
