@@ -1,12 +1,12 @@
 version: "3"
 
 include:
-  - compose/changedetection.yaml
+  # - compose/changedetection.yaml
   - compose/duckdns.yaml
   - compose/freshrss.yaml
   - compose/hoarder/hoarder.yaml
   - compose/mealie.yaml
-  - compose/reactive-resume/reactive-resume.yaml
+  # - compose/reactive-resume/reactive-resume.yaml
   - compose/redlib/redlib.yaml
   # - compose/ryot.yaml
   - compose/ttrss.yaml
