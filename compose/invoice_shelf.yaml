@@ -33,7 +33,7 @@ services:
       - APP_NAME=Laravel
       - APP_ENV=local
       - APP_DEBUG=true
-      - APP_URL=http://localhost:90
+      - APP_URL=http://${IP_ADDRESS}:8100
       - DB_CONNECTION=pgsql
       - DB_HOST=invoiceshelf-db
       - DB_PORT=5432
@@ -41,12 +41,12 @@ services:
       - DB_USERNAME=invoiceshelf
       - DB_PASSWORD=somepass
       - CACHE_STORE=file
-      - SESSION_DRIVER=file
+      - SESSION_DRIVER=cookie
       - SESSION_LIFETIME=120
       - SESSION_ENCRYPT=false
       - SESSION_PATH=/
-      - SESSION_DOMAIN=localhost
-      - SANCTUM_STATEFUL_DOMAINS=localhost:90
+      - SESSION_DOMAIN=${IP_ADDRESS}
+      - SANCTUM_STATEFUL_DOMAINS=${IP_ADDRESS}:${PORT_INVOICESHELF}
       - STARTUP_DELAY=10
       #- MAIL_DRIVER=smtp
       #- MAIL_HOST=smtp.mailtrap.io
