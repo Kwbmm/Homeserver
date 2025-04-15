@@ -1,0 +1,18 @@
+services:
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
+    volumes:
+      - "~/volumes/searxng:/etc/searxng"
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.searxng.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.searxng.entrypoints=searxng"
+    environment:
+      SEARXNG_BASE_URL: "http://${IP_ADDRESS}:${PORT_SEARXNG}/"
+      INSTANCE_NAME: "marco-searxng"
+    restart: unless-stopped
+    networks:
+      - frontend

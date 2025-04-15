@@ -10,6 +10,7 @@ include:
   # - compose/reactive-resume/reactive-resume.yaml
   - compose/redlib/redlib.yaml
   # - compose/ryot.yaml
+  - compose/searxng/searxng.yaml
   - compose/ttrss.yaml
   - compose/vikunja/vikunja.yaml
   - compose/watchtower.yaml
@@ -39,6 +40,7 @@ services:
       - --entryPoints.vikunja.address=:${PORT_VIKUNJA}
       - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
       - --entryPoints.invoiceshelf.address=:${PORT_INVOICESHELF}
+      - --entryPoints.searxng.address=:${PORT_SEARXNG}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
       - --certificatesResolvers.le.acme.email=kwbmm@${URL}
@@ -69,6 +71,7 @@ services:
       - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
       - "${PORT_HOARDER}:${PORT_HOARDER}"
       - "${PORT_INVOICESHELF}:${PORT_INVOICESHELF}"
+      - "${PORT_SEARXNG}:${PORT_SEARXNG}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
