@@ -12,15 +12,8 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vikunja.rule=Host(`${URL}`)"
+      - "traefik.http.routers.vikunja.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.vikunja.entrypoints=vikunja"
-      - "traefik.http.middlewares.secureRedirectVikunja.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectVikunja.redirectscheme.port=${PORT_VIKUNJA}"
-      - "traefik.http.routers.vikunja.middlewares=secureRedirectVikunja"
-      - "traefik.http.routers.vikunja-sec.tls=true"
-      - "traefik.http.routers.vikunja-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.vikunja-sec.entrypoints=vikunja"
-      - "traefik.http.routers.vikunja-sec.tls.certResolver=le"
     networks:
       - frontend
       - backend

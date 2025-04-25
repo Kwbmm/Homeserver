@@ -13,15 +13,8 @@ services:
       DATA_DIR: /data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hoarder.rule=Host(`${URL}`)"
+      - "traefik.http.routers.hoarder.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.hoarder.entrypoints=hoarder"
-      - "traefik.http.middlewares.secureRedirectHoarder.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectHoarder.redirectscheme.port=${PORT_HOARDER}"
-      - "traefik.http.routers.hoarder.middlewares=secureRedirectHoarder"
-      - "traefik.http.routers.hoarder-sec.tls=true"
-      - "traefik.http.routers.hoarder-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.hoarder-sec.entrypoints=hoarder"
-      - "traefik.http.routers.hoarder-sec.tls.certResolver=le"
       - "traefik.http.services.hoarder.loadbalancer.server.port=3000"
     depends_on:
       - hoarder-chrome

@@ -28,13 +28,6 @@ services:
       - backend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ryot.rule=Host(`${URL}`)"
+      - "traefik.http.routers.ryot.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.ryot.entrypoints=ryot"
-      - "traefik.http.middlewares.secureRedirectRyot.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectRyot.redirectscheme.port=${PORT_RYOT}"
       - "traefik.http.services.ryot.loadbalancer.server.port=8000"
-      - "traefik.http.routers.ryot.middlewares=secureRedirectRyot"
-      - "traefik.http.routers.ryot-sec.tls=true"
-      - "traefik.http.routers.ryot-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.ryot-sec.entrypoints=ryot"
-      - "traefik.http.routers.ryot-sec.tls.certResolver=le"

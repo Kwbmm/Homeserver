@@ -8,15 +8,8 @@ services:
           memory: 1000M 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mealie.rule=Host(`${URL}`)"
+      - "traefik.http.routers.mealie.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.mealie.entrypoints=mealie"
-      - "traefik.http.middlewares.secureRedirectMealie.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectMealie.redirectscheme.port=${PORT_MEALIE}"
-      - "traefik.http.routers.mealie.middlewares=secureRedirectMealie"
-      - "traefik.http.routers.mealie-sec.tls=true"
-      - "traefik.http.routers.mealie-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.mealie-sec.entrypoints=mealie"
-      - "traefik.http.routers.mealie-sec.tls.certResolver=le"
     depends_on:
       - mealie-db
       - traefik

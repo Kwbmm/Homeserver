@@ -14,15 +14,8 @@ services:
       - duckdns
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.freshrss.rule=Host(`${URL}`)"
+      - "traefik.http.routers.freshrss.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.freshrss.entrypoints=freshrss"
-      - "traefik.http.middlewares.secureRedirectFreshRSS.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.secureRedirectFreshRSS.redirectscheme.port=${PORT_FRESHRSS}"
-      - "traefik.http.routers.freshrss.middlewares=secureRedirectFreshRSS"
-      - "traefik.http.routers.freshrss-sec.tls=true"
-      - "traefik.http.routers.freshrss-sec.rule=Host(`${URL}`)"
-      - "traefik.http.routers.freshrss-sec.entrypoints=freshrss"
-      - "traefik.http.routers.freshrss-sec.tls.certResolver=le"
     environment:
       TZ: Europe/Rome
       CRON_MIN: '3,33'
