@@ -1,6 +1,6 @@
 services:
   searxng:
-    image: searxng/searxng:2025.5.4-fe08bb1d9
+    image: searxng/searxng
     container_name: searxng
     volumes:
       - "~/volumes/searxng:/etc/searxng"
