@@ -15,6 +15,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.changedetection.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.changedetection.entrypoints=changedetection"
+      - homepage.group=Web
+      - homepage.name=Changedetection.io
+      - homepage.icon=changedetection.svg
+      - homepage.href=http://${IP_ADDRESS}:${PORT_CHANGEDETECTION}
+      - homepage.description=To find changes on webpages.
     networks:
       - frontend
 

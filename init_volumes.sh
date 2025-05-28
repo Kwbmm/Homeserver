@@ -7,6 +7,7 @@ mkdir -p volumes/ttrss-db
 mkdir -p volumes/freshrss
 mkdir -p volumes/freshrss/data
 mkdir -p volumes/freshrss/extensions
+mkdir -p volumes/homepage
 mkdir -p volumes/invoiceshelf/data
 mkdir -p volumes/invoiceshelf/conf
 mkdir -p volumes/invoiceshelf-db

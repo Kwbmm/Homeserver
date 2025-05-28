@@ -6,6 +6,7 @@ include:
   - compose/freshrss.yaml
   - compose/invoice_shelf.yaml
   - compose/hoarder/hoarder.yaml
+  - compose/homepage.yaml
   - compose/mealie.yaml
   # - compose/reactive-resume/reactive-resume.yaml
   - compose/redlib/redlib.yaml
@@ -41,6 +42,7 @@ services:
       - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
       - --entryPoints.invoiceshelf.address=:${PORT_INVOICESHELF}
       - --entryPoints.searxng.address=:${PORT_SEARXNG}
+      - --entryPoints.homepage.address=:${PORT_HOMEPAGE}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
       - --certificatesResolvers.le.acme.email=kwbmm@${URL}
@@ -72,6 +74,7 @@ services:
       - "${PORT_HOARDER}:${PORT_HOARDER}"
       - "${PORT_INVOICESHELF}:${PORT_INVOICESHELF}"
       - "${PORT_SEARXNG}:${PORT_SEARXNG}"
+      - "${PORT_HOMEPAGE}:${PORT_HOMEPAGE}"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -84,6 +87,11 @@ services:
       - "traefik.http.routers.api.entrypoints=traefik"
       - "traefik.http.routers.api.middlewares=traefik-auth"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${BASIC_AUTH_USR}:${BASIC_AUTH_PSW}"
+      - homepage.group=Admin
+      - homepage.name=Traefik Dashboard
+      - homepage.icon=traefik.svg
+      - homepage.href=http://${IP_ADDRESS}:${PORT_DASHBOARD}
+      - homepage.description=Traefik admin dashboard.
     networks:
       - frontend
     restart: unless-stopped

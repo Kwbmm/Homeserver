@@ -21,6 +21,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.invoiceshelf.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.invoiceshelf.entrypoints=invoiceshelf"
+      - homepage.group=Productivity
+      - homepage.name=Invoice Shelf
+      - homepage.icon=sh-invoiceshelf.svg
+      - homepage.href=http://${IP_ADDRESS}:${PORT_INVOICESHELF}
+      - homepage.description=Invoicing clients.
     volumes:
       - ~/volumes/invoiceshelf/data:/data
       - ~/volumes/invoiceshelf/conf:/conf

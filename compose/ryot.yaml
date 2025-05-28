@@ -31,3 +31,8 @@ services:
       - "traefik.http.routers.ryot.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.ryot.entrypoints=ryot"
       - "traefik.http.services.ryot.loadbalancer.server.port=8000"
+      - homepage.group=Misc
+      - homepage.name=Ryot
+      - homepage.icon=ryot.png
+      - homepage.href=http://${IP_ADDRESS}:${PORT_RYOT}
+      - homepage.description=TV series tracker.

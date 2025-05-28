@@ -1,6 +1,6 @@
 services:
   searxng:
-    image: searxng/searxng
+    image: searxng/searxng:2025.5.4-fe08bb1d9
     container_name: searxng
     volumes:
       - "~/volumes/searxng:/etc/searxng"
@@ -10,6 +10,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.searxng.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.searxng.entrypoints=searxng"
+      - homepage.group=Web
+      - homepage.name=Searxng
+      - homepage.icon=searxng.svg
+      - homepage.href=http://${IP_ADDRESS}:${PORT_SEARXNG}
+      - homepage.description=A privacy-respecting metasearch engine.
     environment:
       SEARXNG_BASE_URL: "http://${IP_ADDRESS}:${PORT_SEARXNG}/"
       INSTANCE_NAME: "marco-searxng"

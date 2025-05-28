@@ -19,6 +19,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ttrss.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.ttrss.entrypoints=ttrss"
+      - homepage.group=RSS
+      - homepage.name=Tiny Tiny RSS
+      - homepage.icon=tinytinyrss.png
+      - homepage.href=http://${IP_ADDRESS}:${PORT_TTRSS}
+      - homepage.description=Main news outlet.
     networks:
       - frontend
       - backend

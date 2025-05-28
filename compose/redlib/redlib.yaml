@@ -16,6 +16,11 @@ services:
       - "traefik.http.routers.redlib.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.redlib.entrypoints=redlib"
       - "traefik.http.services.redlib.loadbalancer.server.port=8080"
+      - homepage.group=Web
+      - homepage.name=Reddit
+      - homepage.icon=redlib.svg
+      - homepage.href=http://${IP_ADDRESS}:${PORT_REDLIB}
+      - homepage.description=Reddit client with a focus on privacy and security.
     env_file: .redlib.env
     networks:
       - frontend

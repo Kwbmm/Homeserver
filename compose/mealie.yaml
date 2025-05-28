@@ -10,6 +10,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.mealie.rule=Host(`${IP_ADDRESS}`)"
       - "traefik.http.routers.mealie.entrypoints=mealie"
+      - homepage.group=Misc
+      - homepage.name=Mealie
+      - homepage.icon=mealie.svg
+      - homepage.href=http://${IP_ADDRESS}:${PORT_MEALIE}
+      - homepage.description=Food recipe.
     depends_on:
       - mealie-db
       - traefik
