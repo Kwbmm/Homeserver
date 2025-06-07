@@ -2,7 +2,7 @@ version: "3"
 
 include:
   # - compose/changedetection.yaml
-  - compose/duckdns.yaml
+  # - compose/duckdns.yaml
   - compose/freshrss.yaml
   - compose/invoice_shelf.yaml
   - compose/hoarder/hoarder.yaml
@@ -45,16 +45,16 @@ services:
       - --entryPoints.homepage.address=:${PORT_HOMEPAGE}
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=${NETWORK_NAME}
-      - --certificatesResolvers.le.acme.email=kwbmm@${URL}
-      - --certificatesResolvers.le.acme.tlsChallenge=true
-      - --certificatesResolvers.le.acme.dnsChallenge=true
-      - --certificatesResolvers.le.acme.dnsChallenge.provider=duckdns
+      # - --certificatesResolvers.le.acme.email=kwbmm@${URL}
+      # - --certificatesResolvers.le.acme.tlsChallenge=true
+      # - --certificatesResolvers.le.acme.dnsChallenge=true
+      # - --certificatesResolvers.le.acme.dnsChallenge.provider=duckdns
       # Staging server, test purposes only
 #      - --certificatesResolvers.le.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
-      - --certificatesResolvers.le.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
-      - --certificatesResolvers.le.acme.storage=/letsencrypt/acme.json
-    environment:
-      - DUCKDNS_TOKEN=${DDNS_TOKEN}
+      # - --certificatesResolvers.le.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
+      # - --certificatesResolvers.le.acme.storage=/letsencrypt/acme.json
+    # environment:
+    #   - DUCKDNS_TOKEN=${DDNS_TOKEN}
     ports:
       # The Web UI
       - "${PORT_DASHBOARD}:${PORT_DASHBOARD}"
@@ -78,8 +78,8 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-      - ~/volumes/traefik-letsencrypt:/letsencrypt
-      - ~/volumes/traefik/dynamic.yml:/config/dynamic.yml
+      # - ~/volumes/traefik-letsencrypt:/letsencrypt
+      # - ~/volumes/traefik/dynamic.yml:/config/dynamic.yml
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`${IP_ADDRESS}`)"

@@ -8,7 +8,6 @@ services:
     depends_on:
       - vikunja-db
       - traefik
-      - duckdns
     restart: unless-stopped
     labels:
       - "traefik.enable=true"

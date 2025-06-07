@@ -11,7 +11,6 @@ services:
       - ~/volumes/freshrss/extensions:/var/www/FreshRSS/extensions
     depends_on:
       - traefik
-      - duckdns
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.freshrss.rule=Host(`${IP_ADDRESS}`)"
