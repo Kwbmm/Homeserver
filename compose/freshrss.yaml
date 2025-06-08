@@ -13,13 +13,13 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.freshrss.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.freshrss.rule=Host(`${FRESHRSS_ENDPOINT_URL}`)"
       - "traefik.http.routers.freshrss.entrypoints=freshrss"
-      - homepage.group=RSS
-      - homepage.name=FreshRSS
-      - homepage.icon=freshrss.svg
-      - homepage.href=http://${IP_ADDRESS}:${PORT_FRESHRSS}
-      - homepage.description=Feed reader for images.
+      - "homepage.group=RSS"
+      - "homepage.name=FreshRSS"
+      - "homepage.icon=freshrss.svg"
+      - "homepage.href=https://${FRESHRSS_ENDPOINT_URL}"
+      - "homepage.description=Feed reader for images."
     environment:
       TZ: Europe/Rome
       CRON_MIN: '3,33'
