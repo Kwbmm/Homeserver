@@ -1,6 +1,6 @@
 services:
   hoarder:
-    image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
+    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
     restart: unless-stopped
     container_name: hoarder
     volumes:
@@ -13,14 +13,14 @@ services:
       DATA_DIR: /data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hoarder.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.hoarder.rule=Host(`${HOARDER_ENDPOINT_URL}`)"
       - "traefik.http.routers.hoarder.entrypoints=hoarder"
       - "traefik.http.services.hoarder.loadbalancer.server.port=3000"
-      - homepage.group=Web
-      - homepage.name=Hoarder
-      - homepage.icon=karakeep.svg
-      - homepage.href=http://${IP_ADDRESS}:${PORT_HOARDER}
-      - homepage.description=Bookmark manager with a focus on privacy and security.
+      - "homepage.group=Web"
+      - "homepage.name=Hoarder"
+      - "homepage.icon=karakeep.svg"
+      - "homepage.href=https://${HOARDER_ENDPOINT_URL}"
+      - "homepage.description=Bookmark manager with a focus on privacy and security."
     depends_on:
       - hoarder-chrome
       - hoarder-meilisearch
