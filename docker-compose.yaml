@@ -28,19 +28,23 @@ services:
       - --providers.docker
       - --providers.file.filename=/config/dynamic.yml
       - --entryPoints.webSecure.address=:443
+      
       - --entryPoints.ttrss.address=:${PORT_TTRSS}
+      - --entryPoints.ttrss.forwardedHeaders.insecure
+
       - --entryPoints.freshrss.address=:${PORT_FRESHRSS}
       - --entryPoints.ryot.address=:${PORT_RYOT}
       - --entryPoints.hoarder.address=:${PORT_HOARDER}
       - --entryPoints.mealie.address=:${PORT_MEALIE}
       - --entryPoints.changedetection.address=:${PORT_CHANGEDETECTION}
       - --entryPoints.redlib.address=:${PORT_REDLIB}
+      
       - --entryPoints.rx-resume.address=:${PORT_RX_RES}
       - --entryPoints.rx-res-chrome.address=:${PORT_RX_RES_CHROME}
       - --entryPoints.rx-res-minio.address=:${PORT_RX_RES_MINIO}
+      
       - --entryPoints.traefik.address=:${PORT_DASHBOARD}
       - --entryPoints.vikunja.address=:${PORT_VIKUNJA}
-      - --entryPoints.homeassistant.address=:${PORT_HOMEASSISTANT}
       - --entryPoints.invoiceshelf.address=:${PORT_INVOICESHELF}
       - --entryPoints.searxng.address=:${PORT_SEARXNG}
       - --entryPoints.homepage.address=:${PORT_HOMEPAGE}
@@ -71,7 +75,6 @@ services:
       - "${PORT_RX_RES_MINIO}:${PORT_RX_RES_MINIO}"
       - "${PORT_RX_RES_CHROME}:${PORT_RX_RES_CHROME}"
       - "${PORT_VIKUNJA}:${PORT_VIKUNJA}"
-      - "${PORT_HOMEASSISTANT}:${PORT_HOMEASSISTANT}"
       - "${PORT_HOARDER}:${PORT_HOARDER}"
       - "${PORT_INVOICESHELF}:${PORT_INVOICESHELF}"
       - "${PORT_SEARXNG}:${PORT_SEARXNG}"
