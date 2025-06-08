@@ -2,7 +2,10 @@ services:
   vikunja:
     image: vikunja/vikunja
     container_name: vikunja
-    env_file: .vikunja.env
+    env_file:
+      - path: ../../.env
+      - path: .vikunja.env
+        required: true
     volumes: 
       - ~/volumes/vikunja:/app/vikunja/files
     depends_on:
@@ -11,13 +14,13 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vikunja.rule=Host(`${IP_ADDRESS}`)"
+      - "traefik.http.routers.vikunja.rule=Host(`${VIKUNJA_ENDPOINT_URL}`)"
       - "traefik.http.routers.vikunja.entrypoints=vikunja"
-      - homepage.group=Productivity
-      - homepage.name=Vikunja
-      - homepage.icon=vikunja.svg
-      - homepage.href=http://${IP_ADDRESS}:${PORT_VIKUNJA}
-      - homepage.description=TODO app.
+      - "homepage.group=Productivity"
+      - "homepage.name=Vikunja"
+      - "homepage.icon=vikunja.svg"
+      - "homepage.href=https://${VIKUNJA_ENDPOINT_URL}"
+      - "homepage.description=TODO app."
     networks:
       - frontend
       - backend
